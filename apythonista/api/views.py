@@ -1,8 +1,32 @@
 from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User, Group
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import JSONParser
+from rest_framework.views import APIView
 from rest_framework import viewsets
 from api.serializers import *
 from api.models import *
+
+
+def postPersonalizado(request):
+    """ api/personalizado/ """
+    contenido = {
+        'recibido': request.data
+    }
+    return HttpResponse(JsonResponse(contenido).content,
+        content_type="application/json", status=200)
+
+
+def notImplemented(request):
+    """ 501 Not Implemented """
+    contenido = {
+        'error': "Not Implemented"
+    }
+    return HttpResponse(JsonResponse(contenido).content,
+        content_type="application/json", status=501)
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -43,3 +67,14 @@ class FacturaViewSet(viewsets.ModelViewSet):
     """
     queryset = Factura.objects.all()
     serializer_class = FacturaSerializer
+
+
+class Personalizado(APIView):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated, )
+    parser_handler = (JSONParser, )
+    def get(self, request, format=None):
+        return notImplemented(request)
+
+    def post(self, request, format=None):
+        return postPersonalizado(request)
