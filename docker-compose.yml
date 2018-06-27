@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  web:
+    restart: always
+    build: .
+    command: bash -c "gunicorn ulaservice.wsgi -b 0.0.0.0:9124 --timeout 480"
+    volumes:
+      - ./manager:/code
+      - ./manager/static:/var/www/manager/static
+      - ./manager/upload:/var/www/manager/upload
+      - ./manager/templates:/var/www/manager/templates
+    ports:
+      - "9124:9124"
+    depends_on:
+      - db
+
+  db:
+    restart: always
+    image: postgres:latest

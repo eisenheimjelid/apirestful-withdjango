@@ -1,32 +1,36 @@
-# API RESTFul con REST Framework de Django
+# Sample project for a RESTFul API with REST Framework and Django
 
-Pequeño tutorial sobre como hacer uso de django-restframework, utilizando las clases de serialización de modelos y vistas personalizadas para poder realizar cualquier otro tipo de operación.
+! [Django Logo](django-logo.png)
 
-## Contenido
+! [Django 2.0](https://img.shields.io/badge/django-2.0-green.svg) | [! [Follow on Twitter] (twitter-logo.png)](https://twitter.com/jelidleon) [@jelidleon](https://twitter.com/jelidleon)
 
-A continuación se describe el proceso para poder conseguir un código similar al que se comparte de ejemplo en el presente repositorio.
+Example project, tutorial type about **how to use django-restframework**, using the serialization classes of models and customized views to perform any type of operation (GET, POST, OPTIONS, etc.), and using Docker.
 
-### Haciendo magia (pip-install)
+Read this content in other languages: [English](README.md), [Español](README.es-MX.md)
 
-PIP es una herramienta que nos permitirá contar con todos los paquetes y dependendencias necesarias, en este caso usaremos los siguientes:
+## Content
+
+Next, the process is described, in order to get a code similar to the one shared in the example in this repository.
+
+### Doing magic (Docker + pip)
+
+**PIP** is a tool that will allow us to have all the necessary packages and dependencies, in this case we will use the ones that are in the list of `requirements.pip`.
+
+**Docker** is a tool that will allow us to have all the necessary software to have our full development environment.
 
 ```shell
-pip install django
-pip install djangorestframework
-pip install markup
-pip install django-filter
-pip install django-grappelli
+$ sudo docker-compose build
 ```
 
-### Configurando Django
+### Configuring Django
 
-Ahora debemos realizar la configuración necesaria del settings, para poder usar apropiadamente el paquete de restframework.
+Now we must make the necessary configuration of the settings, in order to properly use the restframework package.
 
-* Con el archivo settings.py
+With the `settings.py` file
 
 ```python
 INSTALLED_APPS = [
-    'grappelli',
+    'jet',
     .
     .
     .
@@ -40,7 +44,7 @@ INSTALLED_APPS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join (BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -48,8 +52,8 @@ DATABASES = {
 .
 .
 
-STATIC_ROOT = 'html/'
-STATIC_URL = '/static/'
+STATIC_ROOT = 'html /'
+STATIC_URL = '/ static /'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
@@ -58,28 +62,30 @@ REST_FRAMEWORK = {
 
 ```
 
-### Creando modelos, funciones y algunas clases
+**_ more changes, soon ... _**
 
-Enseguida procedemos a crear algunos modelos, para completar adecuadamente el ejemplo, así como unas funciones y otras clases, para un servicio personalizado y también para usar los serializadores con los modelos básicos de django Auth.
+### Creating models, functions and some classes
 
-* En el archivo *models.py* definimos los modelos propios, definir los necesarios en otras 'webapps'
+Then we proceed to create some models, to properly complete the example, as well as some functions and other classes, for a personalized service and also to use the serializers with the basic models of django Auth.
+
+In the `models.py` file we define the own models, define the necessary ones in other 'webapps'
 
 ```python
 CONTACT_TYPES = (
-    ('Emisor', 'Emisor'),
-    ('Receptor', 'Receptor'),
+    ('Issuer', 'Issuer'),
+    ('Receiver', 'Receiver'),
 )
 
 
-class Servicio(models.Model):
-    nombre = models.CharField(max_length=1024, null=True, blank=True)
-    descripcion = models.TextField(null=True, blank=True)
+class Service (models.Model):
+    name = models.CharField (max_length = 1024, null = True, blank = True)
+    description = models.TextField (null = True, blank = True)
     .
     .
     .
 ```
 
-* Con el archivo *serializers.py* definimos las clases que se van a usar para serializar los modelos que fueron definidos en el archivo anterior.
+With the file `serializers.py` we define the classes that will be used to serialize the models that were defined in the previous file.
 
 ```python
 from django.contrib.auth.models import User, Group
@@ -87,8 +93,8 @@ from rest_framework import serializers
 from api.models import *
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
+class UserSerializer (serializers.HyperlinkedModelSerializer):
+    class Goal:
         model = User
         fields = ('url', 'username', 'email', 'groups')
     .
@@ -96,17 +102,17 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     .
 ```
 
-* Con el archivo *urls.py* registramos cada set de vistas serializadas, en el enrutador correspondiente con los nombres que definamos según el uso de cada uno.
+With the file `urls.py` we register each set of serialized views, in the corresponding router with the names that we define according to the use of each one.
 
 ```python
 .
 .
 .
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet (viewsets.ModelViewSet):
     """
-    Servicio API para visualizar o editar a los usuarios del sistema
+    API service to view or edit system users
     """
-    queryset = User.objects.all().order_by('-date_joined')
+    queryset = User.objects.all (). order_by ('- date_joined')
     serializer_class = UserSerializer
     .
     .
@@ -115,13 +121,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
 ### CSRF ?? CORS ??
 
-La protección *Cross Site Request Forgery* es un mecanismo de protección contra un tipo particular de ataque, lo que puede ocurrir cuando un usuario no ha cerrado la sesión de un sitio web, y sigue teniendo una sesión válida. En esta circunstancia un sitio malicioso puede ser capaz de realizar acciones contra el sitio de destino, en el contexto de la sesión iniciado la sesión.
+The protection *Cross Site Request Forgery* is a protection mechanism against a particular type of attack, which can occur when a user has not closed a website session, and still has a valid session. In this circumstance a malicious site may be able to perform actions against the destination site, in the context of the session initiated session.
 
-Un claro ejemplo de lo anterior, es cuando deshabilitamos el control en nuestro ejemplo (linea 35 urls.py) o intentamos enviar una solicitud a servicio de tipo POST/PUT sin el token correspondiente.
+A clear example of the above is when we disable the control in our example (line 35 urls.py) or try to send a request to a POST / PUT service without the corresponding token.
 
-El mecanismo *Cross-Origin Resource Sharing* es un mecanismo para permitir que los clientes interactuen con las API que están alojadas en un dominio diferente. CORS consiste en agregar al servidor un conjunto específico de los encabezados que permiten a un navegador determinar si y cuándo se debe permitir solicitudes entre dominios.
+The *Cross-Origin Resource Sharing* mechanism is a mechanism to allow clients to interact with APIs that are hosted in a different domain. CORS consists of adding to the server a specific set of headers that allow a browser to determine if and when requests should be allowed between domains.
 
-Con los siguientes pasos, es muy sencillo habilitar esta opción, para poder permitir la conexión del API sin problemas de seguridad que imponen muchos navegadores Web, por seguridad, haciendo peticiones a dominios de terceros.
+With the following steps, it is very easy to enable this option, in order to allow the API connection without security problems imposed by many Web browsers, for security, making requests to third-party domains.
 
 ```shell
 pip install django-cors-headers
@@ -144,24 +150,24 @@ MIDDLEWARE_CLASSES = (
 )
 ```
 
-### Probando el API RESTful
+### Testing the RESTful API
 
-Ahora solo debemos ejecutar desde la línea de comandos, el runserver; lo que nos permitirá revisar adecuadamente los posibles errores de nuestro código y realizar las pruebas necesarias para asegurarnos de que funciona adecuadamente.
+Now we just have to run from the command line, the runserver; which will allow us to adequately review the possible errors of our code and perform the necessary tests
 
 ```shell
 python3 manage.py runserver
 ```
 
-Por último, desde el navegador ingresamos a la ruta indicada en el runserver, que comunmente es http://localhost:8000/ o hacer uso de clientes de solicitudes HTTP como Postman o similares, para realizar las solicitudes y pruebas correspondientes.
+Finally, from the browser we enter the route indicated in the runserver, which is commonly http: // localhost: 8000 / or make use of HTTP request clients such as Postman or similar, to make the corresponding requests and tests.
 
-### Otras opciones y autenticación
+### Other options and authentication
 
-El JSONParser no es la única opción de parseo que dispone la libreria de RESTFramework, también se puede usar: FormPaser, para las solicitudes que indican application/x-www-form-urlencoded cuando usamos un formulario tradicional; MultiPartParser, usado cuando enviamos archivos en las solicitudes al servidor; y se pueden hacer uso de varios otros e incluso personalizarlos.
+The JSONParser is not the only parsing option available in the RESTFramework library, you can also use: FormPaser, for requests that indicate application / x-www-form-urlencoded when using a traditional form; MultiPartParser, used when we send files in requests to the server; and you can make use of several others and even customize them.
 
-Los métodos de autenticación son tan variados como los que existen a través de la red, de una forma sencilla podemos implementar el esquema de OAuth, OAuth2, JWT, Social OAuth además del Basic Authentication basico que es el utilizado en este ejemplo.
+The authentication methods are as varied as those that exist through the network, in a simple way we can implement the OAuth, OAuth2, JWT, Social OAuth scheme in addition to the Basic Basic Authentication that is used in this example.
 
-Además se pueden hacer uso de varias opciones más, cuando personalizamos nuestros servicios a través de sets de vistas que ya existan o que estemos realizando: renderer_classes, parser_classes, authentication_classes, throttle_classes, permission_classes, content_negotiation_class.
+In addition you can make use of several other options, when we customize our services through sets of views that already exist or that we are doing: renderer_classes, parser_classes, authentication_classes, throttle_classes, permission_classes, content_negotiation_class.
 
-## Conclusiones
+## Conclusions
 
-En proceso...
+**_ still in process _**
