@@ -1,8 +1,8 @@
 # Sample project for a RESTFul API with REST Framework and Django
 
-! [Django Logo](django-logo.png)
+![Django Logo](django-logo.png)
 
-! [Django 2.0](https://img.shields.io/badge/django-2.0-green.svg) | [! [Follow on Twitter] (twitter-logo.png)](https://twitter.com/jelidleon) [@jelidleon](https://twitter.com/jelidleon)
+![Django 2.0](https://img.shields.io/badge/django-2.0-green.svg) | [![Follow on Twitter](twitter-logo.png)](https://twitter.com/jelidleon) [@jelidleon](https://twitter.com/jelidleon)
 
 Example project, tutorial type about **how to use django-restframework**, using the serialization classes of models and customized views to perform any type of operation (GET, POST, OPTIONS, etc.), and using Docker.
 
